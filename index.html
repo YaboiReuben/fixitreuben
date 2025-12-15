@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix It Reuben | Fast & Reliable Software Fixes</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Lucide Icons for small graphics -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Configure Tailwind to use Inter font and custom colors/shadows */
+        :root {
+            --color-primary: #34d399; /* Emerald/Cyan for contrast */
+            --color-secondary: #a78bfa; /* Violet for buttons/accents */
+            --color-dark: #0d0a1b; /* Deep Space Navy */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-dark);
+        }
+
+        .neon-text {
+            color: #ffffff;
+            text-shadow: 0 0 4px rgba(52, 211, 245, 0.7), 0 0 8px rgba(52, 211, 245, 0.8), 0 0 15px rgba(52, 211, 245, 0.9);
+            /* Cyan/Blue glow */
+        }
+
+        .neon-btn {
+            border: 2px solid #a78bfa;
+            box-shadow: 0 0 5px #a78bfa, 0 0 10px #a78bfa, 0 0 20px rgba(167, 139, 250, 0.4);
+            /* Purple glow */
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .neon-btn:hover {
+            background-color: #a78bfa;
+            color: #0d0a1b;
+            box-shadow: 0 0 10px #818cf8, 0 0 20px #818cf8, 0 0 40px #818cf8, 0 0 80px rgba(129, 140, 248, 0.6);
+            transform: scale(1.05);
+        }
+
+        .neon-border-card {
+            border: 1px solid #c084fc;
+            box-shadow: 0 0 5px rgba(192, 132, 252, 0.6), 0 0 15px rgba(192, 132, 252, 0.3);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .neon-border-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 10px #f472b6, 0 0 25px #f472b6, 0 0 50px rgba(244, 114, 182, 0.5);
+        }
+
+        /* Background animation for subtle star movement */
+        @keyframes star-move {
+            0% {
+                background-position: 0 0, 400px 200px, 100px 500px;
+            }
+            100% {
+                background-position: 2000px 2000px, 2400px 2200px, 2100px 2500px;
+            }
+        }
+
+        .starfield-bg {
+            background: var(--color-dark);
+            background-image: radial-gradient(white, rgba(255, 255, 255, 0.2) 2px, transparent 40px),
+                radial-gradient(white, rgba(255, 255, 255, 0.15) 1px, transparent 30px),
+                radial-gradient(white, rgba(255, 255, 255, 0.1) 0.5px, transparent 20px);
+            background-size: 2000px 2000px, 1500px 1500px, 1000px 1000px;
+            background-position: 0 0, 400px 200px, 100px 500px;
+            animation: star-move 300s linear infinite;
+        }
+
+        /* Responsive timeline */
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background-color: #a78bfa;
+            box-shadow: 0 0 5px #a78bfa, 0 0 10px #a78bfa;
+            z-index: 10;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: -0.875rem;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, #a78bfa, #c084fc, #34d399);
+        }
+
+        @media (min-width: 768px) {
+            .timeline-item::before {
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+            .timeline-line {
+                left: 50%;
+                width: 2px;
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Modal styling */
+        .modal {
+            transition: opacity 0.3s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="bg-[--color-dark] text-gray-100 min-h-screen">
+
+    <!-- Navbar (Sticky Top) -->
+    <header class="sticky top-0 z-50 bg-[--color-dark] bg-opacity-95 backdrop-blur-sm border-b border-purple-900/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-3">
+            <!-- Logo -->
+            <a href="#hero" class="text-2xl font-extrabold flex items-center space-x-2 text-cyan-400 neon-text">
+                <i data-lucide="wrench-screwdriver" class="w-6 h-6 text-cyan-400"></i>
+                <span>Fix It Reuben</span>
+            </a>
+
+            <!-- Menu (Hidden on mobile) -->
+            <nav class="hidden md:flex space-x-8 text-lg font-medium">
+                <a href="#hero" class="hover:text-cyan-400 transition duration-300">Home</a>
+                <a href="#services" class="hover:text-cyan-400 transition duration-300">Services</a>
+                <a href="#about" class="hover:text-cyan-400 transition duration-300">About</a>
+                <a href="#reviews" class="hover:text-cyan-400 transition duration-300">Reviews</a>
+                <a href="#faq" class="hover:text-cyan-400 transition duration-300">FAQ</a>
+                <a href="#contact" class="hover:text-cyan-400 transition duration-300">Contact</a>
+            </nav>
+
+            <!-- CTA Button -->
+            <a href="#booking" class="px-5 py-2 rounded-full font-bold text-sm uppercase neon-btn">
+                Book Me Now
+            </a>
+        </div>
+    </header>
+
+    <main>
+        <!-- Section 1: Hero / Landing -->
+        <section id="hero" class="starfield-bg h-[80vh] flex items-center justify-center relative overflow-hidden text-center p-4">
+            <div class="absolute inset-0 z-0 opacity-10 pointer-events-none">
+                <!-- Floating tech icons simulation (using lucide icons for visual effect) -->
+                <i data-lucide="cpu" class="absolute top-1/4 left-1/4 w-8 h-8 text-indigo-400 animate-pulse"></i>
+                <i data-lucide="cloud" class="absolute top-1/2 right-1/4 w-10 h-10 text-pink-400 animate-[pulse_5s_infinite_ease-in-out_1s]"></i>
+                <i data-lucide="smartphone" class="absolute bottom-1/4 left-1/2 w-6 h-6 text-cyan-400 animate-[pulse_4s_infinite_ease-in-out_2s]"></i>
+                <i data-lucide="activity" class="absolute top-1/3 right-1/2 w-12 h-12 text-green-400 animate-pulse"></i>
+            </div>
+            <div class="z-10 max-w-4xl space-y-6">
+                <h1 class="text-5xl md:text-7xl font-extrabold uppercase leading-tight neon-text">
+                    Fast & Reliable Software Fixes with Reuben
+                </h1>
+                <p class="text-xl md:text-2xl text-gray-300">
+                    Affordable solutions for your computer, smartphone, and network software issues
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-6 pt-4">
+                    <a href="#booking" class="px-8 py-3 rounded-full font-bold uppercase text-white neon-btn">
+                        Book a Service
+                    </a>
+                    <a href="#services" class="px-8 py-3 rounded-full font-bold uppercase text-white border-2 border-gray-500 hover:border-cyan-400 hover:text-cyan-400 transition duration-300">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Services -->
+        <section id="services" class="py-20 bg-gray-900/50">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-4xl font-extrabold uppercase mb-12 neon-text">Our Software Services</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Service Card 1 -->
+                    <div class="p-6 rounded-xl bg-gray-800/70 neon-border-card flex flex-col items-center text-center">
+                        <i data-lucide="shield-off" class="w-10 h-10 mb-4 text-red-400"></i>
+                        <h3 class="text-2xl font-bold mb-2 text-pink-300">Virus & Malware Removal</h3>
+                        <p class="text-gray-400 flex-grow">Deep scanning and removal of malicious software to restore security and speed.</p>
+                        <p class="text-3xl font-extrabold text-cyan-400 mt-4">$20</p>
+                        <p class="text-sm text-gray-500">per device</p>
+                        <a href="#booking" class="mt-4 px-4 py-2 text-sm rounded-full font-medium neon-btn w-full">Book Now</a>
+                    </div>
+                    <!-- Service Card 2 -->
+                    <div class="p-6 rounded-xl bg-gray-800/70 neon-border-card flex flex-col items-center text-center">
+                        <i data-lucide=
+                        
+                        
+                        "package" class="w-10 h-10 mb-4 text-yellow-400"></i>
+                        <h3 class="text-2xl font-bold mb-2 text-pink-300">Software Installation & Updates</h3>
+                        <p class="text-gray-400 flex-grow">Hassle-free setup, configuration, and essential updates for any application.</p>
+                        <p class="text-3xl font-extrabold text-cyan-400 mt-4">$15</p>
+                        <p class="text-sm text-gray-500">per device</p>
+                        <a href="#booking" class="mt-4 px-4 py-2 text-sm rounded-full font-medium neon-btn w-full">Book Now</a>
+                    </div>
+                    <!-- Service Card 3 -->
+                    <div class="p-6 rounded-xl bg-gray-800/70 neon-border-card flex flex-col items-center text-center">
+                        <i data-lucide="settings" class="w-10 h-10 mb-4 text-green-400"></i>
+                        <h3 class="text-2xl font-bold mb-2 text-pink-300">Operating System Troubleshooting</h3>
+                        <p class="text-gray-400 flex-grow">Diagnosing and resolving common issues within Windows, macOS, or Linux.</p>
+                        <p class="text-3xl font-extrabold text-cyan-400 mt-4">$20</p>
+                        <p class="text-sm text-gray-500">per device</p>
+                        <a href="#booking" class="mt-4 px-4 py-2 text-sm rounded-full font-medium neon-btn w-full">Book Now</a>
+                    </div>
+                    <!-- Service Card 4 -->
+                    <div class="p-6 rounded-xl bg-gray-800/70 neon-border-card flex flex-col items-center text-center">
+                        <i data-lucide="router" class="w-10 h-10 mb-4 text-indigo-400"></i>
+                        <h3 class="text-2xl font-bold mb-2 text-pink-300">Network & Connectivity Fixes</h3>
+                        <p class="text-gray-400 flex-grow">Resolving Wi-Fi, Ethernet, and connectivity problems on your home network.</p>
+                        <p class="text-3xl font-extrabold text-cyan-400 mt-4">$15</p>
+                        <p class="text-sm text-gray-500">per session</p>
+                        <a href="#booking" class="mt-4 px-4 py-2 text-sm rounded-full font-medium neon-btn w-full">Book Now</a>
+                    </div>
+                    <!-- Service Card 5 -->
+                    <div class="p-6 rounded-xl bg-gray-800/70 neon-border-card flex flex-col items-center text-center">
+                        <i data-lucide="zap" class="w-10 h-10 mb-4 text-orange-400"></i>
+                        <h3 class="text-2xl font-bold mb-2 text-pink-300">Performance Optimization & Cleanup</h3>
+                        <p class="text-gray-400 flex-grow">Getting rid of junk files and unnecessary startups to boost speed and responsiveness.</p>
+                        <p class="text-3xl font-extrabold text-cyan-400 mt-4">$10</p>
+                        <p class="text-sm text-gray-500">per device</p>
+                        <a href="#booking" class="mt-4 px-4 py-2 text-sm rounded-full font-medium neon-btn w-full">Book Now</a>
+                    </div>
+                    <!-- Notes Card -->
+                    <div class="p-6 rounded-xl bg-purple-900/50 neon-border-card flex flex-col justify-center items-center text-center lg:col-span-1 md:col-span-2">
+                        <p class="text-xl font-semibold text-white mb-2">Important Service Notes:</p>
+                        <ul class="list-disc list-inside text-left space-y-2 text-gray-300">
+                            <li><span class="font-bold text-pink-300">Software fixes only</span> – No hardware repairs.</li>
+                            <li><span class="font-bold text-pink-300">Remote or in-person</span> available (small travel fee may apply in Albury).</li>
+                            <li>All bookings <span class="text-cyan-400">MUST</span> be done via the form below.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: How It Works -->
+        <section id="how-it-works" class="py-20 starfield-bg">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-4xl font-extrabold uppercase mb-16 neon-text">The Fix-It Process (Space Timeline)</h2>
+
+                <div class="relative mt-8 md:mt-20">
+                    <!-- Line connecting the steps (Hidden on small screens) -->
+                    <div class="timeline-line hidden md:block"></div>
+
+                    <ol class="md:flex md:justify-between md:space-x-12 relative">
+                        <!-- Step 1: Booking Form -->
+                        <li class="timeline-item p-4 mb-12 md:mb-0 md:w-1/4 relative text-left md:text-center">
+                            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-purple-600 flex items-center justify-center mx-auto mb-4 neon-border-card">
+                                <i data-lucide="form-input" class="w-6 h-6 md:w-8 md:h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-pink-300 mb-2">Fill the Booking Form</h3>
+                            <p class="text-gray-400 text-sm">All bookings must be submitted via the form below to initiate the process.</p>
+                        </li>
+                        <!-- Step 2: Get a Quote -->
+                        <li class="timeline-item p-4 mb-12 md:mb-0 md:w-1/4 relative text-left md:text-center">
+                            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-indigo-600 flex items-center justify-center mx-auto mb-4 neon-border-card">
+                                <i data-lucide="banknote" class="w-6 h-6 md:w-8 md:h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-pink-300 mb-2">Get a Quote</h3>
+                            <p class="text-gray-400 text-sm">We provide quick, transparent, and affordable pricing based on your issue.</p>
+                        </li>
+                        <!-- Step 3: Tech Fix -->
+                        <li class="timeline-item p-4 mb-12 md:mb-0 md:w-1/4 relative text-left md:text-center">
+                            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-cyan-600 flex items-center justify-center mx-auto mb-4 neon-border-card">
+                                <i data-lucide="remote-cog" class="w-6 h-6 md:w-8 md:h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-pink-300 mb-2">Tech Fix</h3>
+                            <p class="text-gray-400 text-sm">The repair is performed remotely or in-person, getting you back up and running fast.</p>
+                        </li>
+                        <!-- Step 4: Follow-Up -->
+                        <li class="timeline-item p-4 md:w-1/4 relative text-left md:text-center">
+                            <div class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-green-600 flex items-center justify-center mx-auto mb-4 neon-border-card">
+                                <i data-lucide="check-circle" class="w-6 h-6 md:w-8 md:h-8 text-white"></i>
+                            </div>
+                            <h3 class="text-xl font-bold text-pink-300 mb-2">Follow-Up</h3>
+                            <p class="text-gray-400 text-sm">We ensure everything works perfectly and provide guidance to prevent future issues.</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: About Reuben -->
+        <section id="about" class="py-20 bg-gray-900/50">
+            <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-extrabold uppercase text-center mb-12 neon-text">Meet Your Tech Savior</h2>
+                <div class="flex flex-col md:flex-row items-center gap-12 bg-gray-800/70 p-8 rounded-2xl neon-border-card">
+                    <!-- Placeholder Picture -->
+                    <div class="flex-shrink-0 relative w-48 h-48 md:w-64 md:h-64 rounded-full border-4 border-cyan-400 shadow-2xl shadow-cyan-500/50 overflow-hidden">
+                        <img src="https://placehold.co/256x256/1f2937/a78bfa?text=Reuben+Tech" alt="Picture of Reuben" class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/30 flex items-center justify-center">
+                            <i data-lucide="person-standing" class="w-16 h-16 text-white opacity-80"></i>
+                        </div>
+                    </div>
+
+                    <!-- Bio and Stats -->
+                    <div class="flex-grow space-y-6">
+                        <p class="text-lg text-gray-300 leading-relaxed">
+                            Hi, I'm Reuben! I started <span class="text-cyan-400 font-bold">Fix It Reuben</span> two years ago to provide
+                            the Albury community with fast, affordable, and trustworthy software repair services. I believe getting your tech fixed shouldn't break the bank or take weeks.
+                        </p>
+                        <h3 class="text-2xl font-bold text-pink-300">My Guarantee:</h3>
+                        <ul class="space-y-2 text-gray-300">
+                            <li class="flex items-center space-x-3">
+                                <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-yellow-400/50"></i>
+                                <span><span class="font-bold text-white">Quick response</span> & turnaround times.</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-yellow-400/50"></i>
+                                <span><span class="font-bold text-white">Affordable rates</span> (see services section).</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-yellow-400/50"></i>
+                                <span><span class="font-bold text-white">Trusted by locals</span> for transparent work.</span>
+                            </li>
+                            <li class="flex items-center space-x-3">
+                                <i data-lucide="star" class="w-5 h-5 text-yellow-400 fill-yellow-400/50"></i>
+                                <span><span class="font-bold text-white">Flexible scheduling</span> for remote or in-person repairs.</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Reviews – Coming Soon -->
+        <section id="reviews" class="py-20 starfield-bg">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="bg-gray-800/70 p-12 rounded-2xl neon-border-card">
+                    <h2 class="text-5xl font-extrabold uppercase mb-4 neon-text text-pink-400">
+                        Reviews Coming Soon!
+                    </h2>
+                    <p class="text-xl text-gray-300 mb-6">
+                        We're currently gathering feedback from our initial customers.
+                    </p>
+                    <div class="space-y-2 text-gray-400">
+                        <p>To <span class="font-bold text-white">give a review</span>, email:</p>
+                        <a href="mailto:fixitreubenalbury@gmail.com" class="text-cyan-400 hover:text-cyan-300 font-medium text-lg">fixitreubenalbury@gmail.com</a>
+                        <p class="pt-4 text-sm italic">You can also email to inquire about current ratings and testimonials.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 6: Booking Form -->
+        <section id="booking" class="py-20 bg-gradient-to-br from-gray-900 to-purple-900">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-extrabold uppercase text-center mb-12 neon-text">Book Your Software Fix</h2>
+                <form id="booking-form" class="bg-gray-800/80 p-8 md:p-10 rounded-xl space-y-6 neon-border-card">
+                    <div>
+                        <label for="name" class="block text-sm font-medium text-gray-300 mb-1">Full Name</label>
+                        <input type="text" id="name" name="name" required minlength="2" placeholder="John Doe"
+                            class="w-full p-3 rounded-lg bg-gray-900 border border-purple-600 focus:ring-cyan-500 focus:border-cyan-500 text-white">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email Address</label>
+                        <input type="email" id="email" name="email" required pattern="[^@\s]+@[^@\s]+\.[^@\s]+" placeholder="you@example.com"
+                            class="w-full p-3 rounded-lg bg-gray-900 border border-purple-600 focus:ring-cyan-500 focus:border-cyan-500 text-white">
+                    </div>
+                    <div>
+                        <label for="phone" class="block text-sm font-medium text-gray-300 mb-1">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required pattern="^[\d\s\-\(\)]+$" minlength="8" placeholder="(04) 1234 5678"
+                            class="w-full p-3 rounded-lg bg-gray-900 border border-purple-600 focus:ring-cyan-500 focus:border-cyan-500 text-white">
+                    </div>
+                    <div>
+                        <label for="service-needed" class="block text-sm font-medium text-gray-300 mb-1">Service Needed</label>
+                        <select id="service-needed" name="service-needed" required
+                            class="w-full p-3 rounded-lg bg-gray-900 border border-purple-600 focus:ring-cyan-500 focus:border-cyan-500 text-white appearance-none cursor-pointer">
+                            <option value="">-- Select a Service --</option>
+                            <option value="virus-malware">$20 - Virus & Malware Removal</option>
+                            <option value="installation-updates">$15 - Software Installation & Updates</option>
+                            <option value="os-troubleshooting">$20 - Operating System Troubleshooting</option>
+                            <option value="network-fixes">$15 - Network & Connectivity Fixes</option>
+                            <option value="optimization-cleanup">$10 - Performance Optimization & Cleanup</option>
+                            <option value="other">Other (Describe in Message)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="datetime" class="block text-sm font-medium text-gray-300 mb-1">Preferred Date/Time</label>
+                        <input type="datetime-local" id="datetime" name="datetime" required
+                            class="w-full p-3 rounded-lg bg-gray-900 border border-purple-600 focus:ring-cyan-500 focus:border-cyan-500 text-white">
+                    </div>
+                    <div>
+                        <label for="message" class="block text-sm font-medium text-gray-300 mb-1">Describe the Issue (Message)</label>
+                        <textarea id="message" name="message" rows="4" required minlength="10" placeholder="My laptop is running very slow and keeps showing pop-ups..."
+                            class="w-full p-3 rounded-lg bg-gray-900 border border-purple-600 focus:ring-cyan-500 focus:border-cyan-500 text-white"></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 rounded-full font-bold uppercase text-white neon-btn">
+                        Book Now
+                    </button>
+                    <!-- Form Status Message has been removed from here. -->
+                </form>
+                <p class="text-center text-gray-400 text-sm italic mt-4">
+                    NOTE: This form is for booking only. For general questions, please use the email in the Contact section.
+                </p>
+            </div>
+        </section>
+
+        <!-- Section 7: FAQ (Space Theme, Neon Accordion) -->
+        <section id="faq" class="py-20 starfield-bg">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-extrabold uppercase text-center mb-12 neon-text">Frequently Asked Questions</h2>
+                <div class="space-y-4">
+                    <!-- FAQ Items -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 8: Contact Section -->
+        <section id="contact" class="py-20 bg-gradient-to-tr from-purple-900 to-gray-900">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-4xl font-extrabold uppercase mb-6 neon-text">Have an Inquiry?</h2>
+                <div class="bg-gray-800/70 p-8 rounded-xl neon-border-card space-y-4">
+                    <p class="text-xl text-gray-300">
+                        For inquiries, questions, or clarifications, please email me directly:
+                    </p>
+                    <a href="mailto:fixitreubenalbury@gmail.com" class="inline-flex items-center space-x-3 text-cyan-400 hover:text-cyan-300 font-extrabold text-2xl md:text-3xl neon-text">
+                        <i data-lucide="mail" class="w-6 h-6 md:w-8 md:h-8"></i>
+                        <span>fixitreubenalbury@gmail.com</span>
+                    </a>
+                    <p class="text-sm text-red-400 font-medium pt-2">
+                        IMPORTANT: All service bookings must go through the dedicated booking form above. This email is for contact only.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Section 9: Footer -->
+    <footer class="bg-[--color-dark] border-t border-purple-900/50 py-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
+            <!-- Quick Links -->
+            <div class="flex flex-wrap justify-center space-x-4 md:space-x-8 text-gray-400 text-sm md:text-base font-medium">
+                <a href="#hero" class="hover:text-cyan-400 transition duration-300">Home</a>
+                <a href="#services" class="hover:text-cyan-400 transition duration-300">Services</a>
+                <a href="#about" class="hover:text-cyan-400 transition duration-300">About</a>
+                <a href="#reviews" class="hover:text-cyan-400 transition duration-300">Reviews</a>
+                <a href="#faq" class="hover:text-cyan-400 transition duration-300">FAQ</a>
+                <a href="#contact" class="hover:text-cyan-400 transition duration-300">Contact</a>
+            </div>
+
+            <!-- Social Links & Email -->
+            <div class="flex justify-center space-x-6">
+                <a href="https://facebook.com" target="_blank" class="text-gray-400 hover:text-cyan-400 transition duration-300">
+                    <i data-lucide="facebook" class="w-6 h-6"></i>
+                </a>
+                <a href="https://instagram.com" target="_blank" class="text-gray-400 hover:text-cyan-400 transition duration-300">
+                    <i data-lucide="instagram" class="w-6 h-6"></i>
+                </a>
+                <a href="https://linkedin.com" target="_blank" class="text-gray-400 hover:text-cyan-400 transition duration-300">
+                    <i data-lucide="linkedin" class="w-6 h-6"></i>
+                </a>
+                <a href="mailto:fixitreubenalbury@gmail.com" class="text-gray-400 hover:text-cyan-400 transition duration-300 flex items-center space-x-2">
+                    <i data-lucide="mail" class="w-6 h-6"></i>
+                    <span class="text-sm">fixitreubenalbury@gmail.com</span>
+                </a>
+            </div>
+
+            <!-- Copyright -->
+            <p class="text-gray-500 text-sm pt-4">© 2025 Fix It Reuben. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Booking Status Modal -->
+    <div id="booking-modal" class="modal fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[9999] opacity-0 pointer-events-none">
+        <div class="bg-gray-800 p-8 rounded-xl shadow-2xl max-w-sm w-full text-center neon-border-card" id="modal-content">
+            <i id="modal-icon" data-lucide="circle-dot" class="w-12 h-12 mx-auto mb-4 text-cyan-400 animate-spin"></i>
+            <h3 id="modal-title" class="text-xl font-bold mb-2 text-white">Processing Booking...</h3>
+            <p id="modal-message" class="text-gray-300">Please wait while we submit your request.</p>
+            <button onclick="closeModal()" class="mt-6 px-4 py-2 text-sm rounded-full font-medium neon-btn hidden" id="modal-close-btn">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // ------------------------------------
+        // MODAL UTILITY FUNCTIONS
+        // ------------------------------------
+        const modal = document.getElementById('booking-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalMessage = document.getElementById('modal-message');
+        const modalIcon = document.getElementById('modal-icon');
+        const modalContent = document.getElementById('modal-content');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        function openModal(title, message, iconName, iconColor, spin = false) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+            
+            // Clear previous icon and classes
+            modalIcon.outerHTML = `<i data-lucide="${iconName}" class="w-12 h-12 mx-auto mb-4 ${iconColor} ${spin ? 'animate-spin' : ''}" id="modal-icon"></i>`;
+            lucide.createIcons(); // Re-initialize new icon
+
+            modalCloseBtn.classList.add('hidden');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function updateModal(title, message, iconName, iconColor, showClose = true) {
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+
+            // Update icon, removing spin class
+            modalIcon.outerHTML = `<i data-lucide="${iconName}" class="w-12 h-12 mx-auto mb-4 ${iconColor}" id="modal-icon"></i>`;
+            lucide.createIcons();
+
+            if (showClose) {
+                modalCloseBtn.classList.remove('hidden');
+            } else {
+                 modalCloseBtn.classList.add('hidden');
+            }
+        }
+
+        function closeModal() {
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // ------------------------------------
+        // 1. FAQ ACCORDION FUNCTIONALITY
+        // ------------------------------------
+        const faqs = [{
+                q: "What services do you offer?",
+                a: "Software troubleshooting, virus & malware removal, system optimization, software installation, and general computer/device repair (software only)."
+            },
+            {
+                q: "How much do your services cost?",
+                a: "$10–$30 depending on the issue. Get an exact quote via the booking form."
+            },
+            {
+                q: "How long does a repair take?",
+                a: "10 minutes–24 hours, or longer if the device must be taken home for fixing (rarely needed)."
+            },
+            {
+                q: "Do I need to bring my device in?",
+                a: "Repairs can often be done remotely; in-person visits arranged in Albury if needed (a small travel fee may apply)."
+            },
+            {
+                q: "How do I book a repair?",
+                a: "Fill out the form on the website (Section 6). Email is for contact only and cannot be used for booking."
+            },
+            {
+                q: "Do you guarantee your work?",
+                a: "Yes. If the same issue occurs within 30 days after service, we will fix it again free of charge."
+            },
+            {
+                q: "Can you recover lost files?",
+                a: "We can attempt recovery depending on the situation; contact us with device details. Success depends on the type of damage."
+            },
+            {
+                q: "Are there any hidden fees?",
+                a: "No, all costs are provided upfront after assessment and before work begins. Any travel fee is also disclosed."
+            },
+            {
+                q: "Do you work with all types of devices?",
+                a: "Yes. Windows PCs, Macs, laptops, and most mobile devices (smartphones, tablets)."
+            },
+            {
+                q: "How experienced are you?",
+                a: "I have 2 years of professional and extensive experience helping locals in Albury."
+            },
+            {
+                q: "What payment methods do you accept?",
+                a: "Cash, bank transfer, or PayPal. Payment is due upon successful completion of the service."
+            },
+            {
+                q: "Are you available on public holidays?",
+                a: "Closed on public holidays. Please plan your booking around regular business days."
+            },
+            {
+                q: "Do you provide ongoing support?",
+                a: "Yes. I offer guidance on software maintenance and best practices to prevent future issues."
+            },
+        ];
+
+        const faqContainer = document.querySelector('#faq .space-y-4');
+
+        faqs.forEach((item, index) => {
+            const id = `faq-${index}`;
+            const button = document.createElement('button');
+            button.className = 'w-full flex justify-between items-center p-4 rounded-t-lg bg-gray-800/70 hover:bg-gray-700/70 transition duration-300 font-bold text-lg text-cyan-400 focus:outline-none';
+            button.setAttribute('aria-expanded', 'false');
+            button.setAttribute('aria-controls', `content-${id}`);
+            button.innerHTML = `
+                <span>${item.q}</span>
+                <i data-lucide="chevron-down" class="w-6 h-6 transition-transform duration-300" id="icon-${id}"></i>
+            `;
+
+            const content = document.createElement('div');
+            content.id = `content-${id}`;
+            content.className = 'max-h-0 overflow-hidden transition-all duration-500 ease-in-out bg-gray-900/70 text-gray-300 p-0 rounded-b-lg';
+
+            const contentInner = document.createElement('p');
+            contentInner.className = 'p-4 pt-0 text-md leading-relaxed';
+            contentInner.textContent = item.a;
+
+            content.appendChild(contentInner);
+
+            const faqItem = document.createElement('div');
+            faqItem.className = 'neon-border-card rounded-lg overflow-hidden';
+            faqItem.appendChild(button);
+            faqItem.appendChild(content);
+
+            faqContainer.appendChild(faqItem);
+
+            button.addEventListener('click', () => {
+                const isExpanded = button.getAttribute('aria-expanded') === 'true';
+                const icon = document.getElementById(`icon-${id}`);
+
+                // Collapse all others
+                document.querySelectorAll('#faq button[aria-expanded="true"]').forEach(btn => {
+                    if (btn !== button) {
+                        btn.setAttribute('aria-expanded', 'false');
+                        btn.querySelector('i').classList.remove('rotate-180');
+                        // Use data attribute for ID to avoid clash
+                        const contentId = `content-${btn.getAttribute('aria-controls').split('-')[1]}`;
+                        const otherContent = document.getElementById(contentId);
+                        if (otherContent) {
+                            otherContent.style.maxHeight = '0';
+                            otherContent.querySelector('p').style.paddingTop = '0';
+                        }
+                    }
+                });
+
+                // Toggle current item
+                if (isExpanded) {
+                    button.setAttribute('aria-expanded', 'false');
+                    icon.classList.remove('rotate-180');
+                    content.style.maxHeight = '0';
+                    contentInner.style.paddingTop = '0';
+                } else {
+                    button.setAttribute('aria-expanded', 'true');
+                    icon.classList.add('rotate-180');
+                    content.style.maxHeight = content.scrollHeight + 'px'; // Set to actual height
+                    contentInner.style.paddingTop = '1rem';
+                }
+            });
+        });
+
+        // Re-initialize Lucide Icons after adding FAQ content
+        lucide.createIcons();
+
+
+        // ------------------------------------
+        // HELPER: Convert FormData to JSON object
+        // ------------------------------------
+        function formDataToJson(formData) {
+            const object = {};
+            formData.forEach((value, key) => {
+                object[key] = value;
+            });
+            // Add a timestamp for the server
+            object.submissionTime = new Date().toISOString();
+            return object;
+        }
+
+        // ------------------------------------
+        // 2. BOOKING FORM SUBMISSION (Real Fetch Request)
+        // ------------------------------------
+        document.getElementById('booking-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Perform simple JavaScript validation (in addition to HTML5 validation attributes)
+            const serviceNeeded = document.getElementById('service-needed').value;
+            if (serviceNeeded === "") {
+                openModal("Validation Error", "Please select a service before submitting the booking.", "triangle-alert", "text-red-400");
+                return;
+            }
+
+            // Show processing modal
+            openModal("Sending Booking...", "Attempting to connect to the booking server...", "loader", "text-cyan-400", true);
+
+            const bookingData = formDataToJson(new FormData(this));
+            const name = bookingData.name;
+            const serviceText = document.getElementById('service-needed').options[document.getElementById('service-needed').selectedIndex].text;
+
+            const TARGET_URL = 'https://fixitreuben.pages.dev/admin';
+            const MAX_RETRIES = 3;
+            let success = false;
+            let lastError = "Unknown error occurred.";
+
+            for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+                try {
+                    const response = await fetch(TARGET_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(bookingData),
+                    });
+
+                    if (response.ok) {
+                        // HTTP status 200-299 indicates success
+                        success = true;
+                        break; // Exit loop on success
+                    } else {
+                        // Server returned an error status (e.g., 400, 500)
+                        const errorBody = await response.text();
+                        lastError = `Server responded with error status: ${response.status} ${response.statusText}`;
+                        console.error(`Attempt ${attempt + 1} failed:`, lastError, errorBody);
+                    }
+                } catch (error) {
+                    // Network error (CORS, connection refused, etc.)
+                    lastError = `Network connection failed: ${error.message}`;
+                    console.error(`Attempt ${attempt + 1} failed: Network error.`, error);
+                }
+
+                if (!success && attempt < MAX_RETRIES - 1) {
+                    // Wait before retrying (simple delay for display purposes)
+                    const delay = 1000 * Math.pow(2, attempt); // 1s, 2s, 4s...
+                    updateModal(
+                        `Connection Failed (Attempt ${attempt + 1} of ${MAX_RETRIES})`, 
+                        `Retrying in ${delay / 1000} seconds... Please wait.`, 
+                        "wifi-off", 
+                        "text-yellow-400",
+                        false // Don't show close button during retry
+                    );
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+
+            if (success) {
+                // Final success state
+                updateModal(
+                    "Booking Confirmed!", 
+                    `Thank you, ${name}. Your booking for "${serviceText}" was successfully sent to the server. We will contact you shortly to confirm the details.`, 
+                    "check-circle", 
+                    "text-green-400"
+                );
+                this.reset();
+            } else {
+                // Final failure state after all retries
+                updateModal(
+                    "Booking Failed", 
+                    `We failed to send your request after ${MAX_RETRIES} attempts. Last error: ${lastError}. Please check your internet connection or try again later.`, 
+                    "x-circle", 
+                    "text-red-400"
+                );
+            }
+        });
+    </script>
+</body>
+
+</html>
