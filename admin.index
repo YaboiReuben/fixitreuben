@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix It Reuben | Admin Panel</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Use Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <!-- Load Lucide Icons for small graphics -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Reusing custom styles from the main website */
+        :root {
+            --color-primary: #34d399; /* Emerald/Cyan for contrast */
+            --color-secondary: #a78bfa; /* Violet for buttons/accents */
+            --color-dark: #0d0a1b; /* Deep Space Navy */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-dark);
+        }
+
+        .neon-text {
+            color: #ffffff;
+            text-shadow: 0 0 4px rgba(52, 211, 245, 0.7), 0 0 8px rgba(52, 211, 245, 0.8), 0 0 15px rgba(52, 211, 245, 0.9);
+            /* Cyan/Blue glow */
+        }
+
+        .neon-btn {
+            border: 2px solid #a78bfa;
+            box-shadow: 0 0 5px #a78bfa, 0 0 10px #a78bfa, 0 0 20px rgba(167, 139, 250, 0.4);
+            /* Purple glow */
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .neon-btn:hover {
+            background-color: #a78bfa;
+            color: #0d0a1b;
+            box-shadow: 0 0 10px #818cf8, 0 0 20px #818cf8, 0 0 40px #818cf8, 0 0 80px rgba(129, 140, 248, 0.6);
+            transform: scale(1.02);
+        }
+
+        .neon-border-card {
+            border: 1px solid #c084fc;
+            box-shadow: 0 0 5px rgba(192, 132, 252, 0.6), 0 0 15px rgba(192, 132, 252, 0.3);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .neon-border-card:hover {
+            box-shadow: 0 0 10px #f472b6, 0 0 25px #f472b6, 0 0 50px rgba(244, 114, 182, 0.5);
+        }
+    </style>
+</head>
+
+<body class="bg-[--color-dark] text-gray-100 min-h-screen p-4 sm:p-8">
+
+    <!-- Header / Title -->
+    <header class="max-w-7xl mx-auto mb-8 border-b-2 border-purple-600/50 pb-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <i data-lucide="shield-check" class="w-8 h-8 text-cyan-400"></i>
+                <h1 class="text-4xl font-extrabold uppercase neon-text">
+                    Admin Panel
+                </h1>
+            </div>
+            <div id="auth-info" class="text-sm text-gray-400">
+                <span id="user-id-display">Loading User ID...</span>
+            </div>
+        </div>
+        <p class="text-gray-400 mt-1">Manage and track all service bookings in real-time.</p>
+    </header>
+
+    <main class="max-w-7xl mx-auto">
+        <!-- Status Filters -->
+        <div class="mb-6 flex space-x-3 p-3 bg-gray-800/50 rounded-lg neon-border-card max-w-lg">
+            <button data-filter="pending" class="filter-btn bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200">
+                Pending
+            </button>
+            <button data-filter="complete" class="filter-btn bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200">
+                Complete
+            </button>
+            <button data-filter="all" class="filter-btn bg-cyan-600 hover:bg-cyan-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200">
+                All Bookings
+            </button>
+        </div>
+
+        <!-- Booking List Container -->
+        <div id="bookings-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Bookings will be dynamically inserted here -->
+            <p id="loading-message" class="col-span-full text-center text-xl text-cyan-400 py-12">
+                <i data-lucide="loader-circle" class="w-8 h-8 inline-block animate-spin mr-2"></i> Loading Bookings...
+            </p>
+            <p id="empty-message" class="hidden col-span-full text-center text-xl text-gray-400 py-12">
+                No bookings found for this filter.
+            </p>
+            <p id="error-message" class="hidden col-span-full text-center text-xl text-red-400 py-12">
+                <i data-lucide="alert-triangle" class="w-6 h-6 inline-block mr-2"></i> Error loading bookings. Check the console for details.
+            </p>
+        </div>
+    </main>
+
+    <!-- Modal for Action Confirmation (Delete/Complete) -->
+    <div id="confirmation-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 z-[100] flex items-center justify-center p-4">
+        <div class="bg-gray-800 p-8 rounded-xl w-full max-w-md neon-border-card space-y-4">
+            <h3 class="text-2xl font-bold text-pink-300" id="modal-title">Confirm Action</h3>
+            <p class="text-gray-300" id="modal-body">Are you sure you want to proceed with this action?</p>
+            <div class="flex justify-end space-x-3">
+                <button id="modal-cancel-btn" class="px-4 py-2 rounded-full bg-gray-600 hover:bg-gray-700 text-white font-semibold">
+                    Cancel
+                </button>
+                <button id="modal-confirm-btn" class="px-4 py-2 rounded-full font-bold uppercase text-white neon-btn">
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Firebase/Firestore Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import {
+            getFirestore,
+            collection,
+            doc,
+            updateDoc,
+            deleteDoc,
+            onSnapshot,
+            query,
+            setLogLevel
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // IMPORTANT: Use global variables provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // Logging for debugging
+        // setLogLevel('Debug');
+
+        // Global state and references
+        let app, db, auth;
+        let userId = null;
+        let isAuthReady = false;
+        let currentFilter = 'pending'; // Default filter
+
+        // DOM Element References (Fetched once the script runs)
+        const bookingsListElement = document.getElementById('bookings-list');
+        const loadingMessage = document.getElementById('loading-message');
+        const emptyMessage = document.getElementById('empty-message');
+        const errorMessage = document.getElementById('error-message');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const modalCancelBtn = document.getElementById('modal-cancel-btn');
+        const modalTitle = document.getElementById('modal-title');
+        const modalBody = document.getElementById('modal-body');
+        const confirmBtn = document.getElementById('modal-confirm-btn');
+        
+        const filterBtns = document.querySelectorAll('.filter-btn');
+
+        // Firestore Paths (Public Data accessible by all users and the admin)
+        const BOOKINGS_COLLECTION_PATH = `/artifacts/${appId}/public/data/bookings`;
+        
+        // 1. Initialize Firebase
+        try {
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (error) {
+            console.error("Firebase Initialization Error:", error);
+            if (errorMessage) {
+                errorMessage.textContent = `Initialization Error: ${error.message}`;
+                errorMessage.classList.remove('hidden');
+            }
+        }
+        
+        // 2. Booking Listener and Renderer
+        function startBookingsListener(statusFilter) {
+            // Guard clause to ensure authentication is ready
+            if (!isAuthReady || !db) {
+                console.warn("Attempted to start listener before Auth/DB was ready.");
+                return;
+            }
+
+            // Show loading message initially (if element exists)
+            if (loadingMessage) {
+                loadingMessage.classList.remove('hidden');
+            }
+            if (bookingsListElement) {
+                bookingsListElement.innerHTML = ''; // Clear previous list
+            }
+            if (emptyMessage) {
+                 emptyMessage.classList.add('hidden');
+            }
+            if (errorMessage) {
+                errorMessage.classList.add('hidden');
+            }
+            
+            const bookingsCollectionRef = collection(db, BOOKINGS_COLLECTION_PATH);
+            const bookingQuery = query(bookingsCollectionRef); // Fetch all documents
+
+            // Attach real-time listener
+            onSnapshot(bookingQuery, (snapshot) => {
+                const bookings = [];
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    // Ensure the timestamp field is available for sorting; if not, use 0
+                    const timestamp = data.timestamp ? data.timestamp.toDate().getTime() : 0;
+                    bookings.push({ id: doc.id, ...data, timestamp });
+                });
+
+                // Sort by creation time (newest first)
+                bookings.sort((a, b) => b.timestamp - a.timestamp);
+
+                // Filter data based on the selected status
+                let filteredBookings = bookings;
+                if (statusFilter === 'pending') {
+                    filteredBookings = bookings.filter(b => !b.isComplete);
+                } else if (statusFilter === 'complete') {
+                    filteredBookings = bookings.filter(b => b.isComplete);
+                }
+                
+                // Render the filtered list
+                renderBookings(filteredBookings);
+
+                // Update messages
+                if (loadingMessage) {
+                    loadingMessage.classList.add('hidden');
+                }
+                if (emptyMessage) {
+                    if (filteredBookings.length === 0) {
+                        emptyMessage.classList.remove('hidden');
+                    } else {
+                        emptyMessage.classList.add('hidden');
+                    }
+                }
+
+                // Re-initialize Lucide icons
+                lucide.createIcons();
+            }, (error) => {
+                console.error("Error listening to bookings:", error);
+                if (loadingMessage) {
+                    loadingMessage.classList.add('hidden');
+                }
+                if (errorMessage) {
+                    errorMessage.textContent = `Error loading data: ${error.message}`;
+                    errorMessage.classList.remove('hidden');
+                }
+            });
+        }
+
+        function renderBookings(bookings) {
+            if (!bookingsListElement) return;
+            
+            bookingsListElement.innerHTML = ''; // Clear existing content
+
+            bookings.forEach(booking => {
+                const isComplete = booking.isComplete || false;
+                const statusColor = isComplete ? 'border-green-400' : 'border-red-400';
+                const statusText = isComplete ? 'Complete' : 'Pending';
+                const bgColor = isComplete ? 'bg-gray-900/70' : 'bg-gray-800/70';
+                const buttonBg = isComplete ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700';
+                const buttonIcon = isComplete ? 'undo' : 'check';
+                const buttonText = isComplete ? 'Mark Pending' : 'Mark Complete';
+                const formattedDate = booking.datetime ? new Date(booking.datetime).toLocaleString() : 'N/A';
+                
+                // Safely get booking time; use 'N/A' if timestamp is missing or cannot be converted
+                let bookingTime = 'N/A';
+                if (booking.timestamp && booking.timestamp.toDate) {
+                     try {
+                        bookingTime = new Date(booking.timestamp.toDate()).toLocaleString();
+                     } catch(e) {
+                         console.error("Could not format booking timestamp:", e);
+                     }
+                }
+
+                const bookingCard = document.createElement('div');
+                bookingCard.className = `p-6 rounded-xl ${bgColor} neon-border-card border-l-4 ${statusColor} space-y-3`;
+                bookingCard.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-xl font-bold text-cyan-400">${booking.name || 'Anonymous Client'}</h3>
+                        <span class="text-sm font-medium ${isComplete ? 'text-green-400' : 'text-red-400'}">Status: ${statusText}</span>
+                    </div>
+                    
+                    <p class="text-gray-300"><span class="font-semibold text-pink-300">Service:</span> ${booking.serviceNeeded || 'General Inquiry'}</p>
+                    <p class="text-gray-300"><span class="font-semibold text-pink-300">Preferred Time:</span> ${formattedDate}</p>
+                    
+                    <div class="border-t border-purple-600/50 pt-3">
+                        <p class="text-gray-400 text-sm italic mb-2">Issue Description:</p>
+                        <p class="text-gray-200 text-sm max-h-20 overflow-auto">${booking.message || 'No description provided.'}</p>
+                    </div>
+
+                    <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-gray-500 border-t border-purple-900/50 pt-3">
+                        <p><i data-lucide="mail" class="w-3 h-3 inline-block"></i> ${booking.email || 'N/A'}</p>
+                        <p><i data-lucide="phone" class="w-3 h-3 inline-block"></i> ${booking.phone || 'N/A'}</p>
+                        <p><i data-lucide="calendar-check" class="w-3 h-3 inline-block"></i> Booked: ${bookingTime}</p>
+                    </div>
+                    
+                    <div class="flex justify-between space-x-2 pt-4">
+                        <button data-id="${booking.id}" data-action="toggle-complete" data-status="${isComplete}"
+                            class="flex-1 py-2 rounded-full font-bold uppercase text-white ${buttonBg} transition duration-300 text-sm">
+                            <i data-lucide="${buttonIcon}" class="w-4 h-4 inline-block mr-1"></i> ${buttonText}
+                        </button>
+                        <button data-id="${booking.id}" data-action="delete"
+                            class="p-2 rounded-full bg-red-800 hover:bg-red-900 text-white transition duration-300">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+                bookingsListElement.appendChild(bookingCard);
+            });
+
+            // Attach event listeners to the new buttons
+            bookingsListElement.querySelectorAll('button[data-action]').forEach(button => {
+                button.addEventListener('click', handleAction);
+            });
+        }
+
+
+        // 3. Action Handlers (Update/Delete)
+        async function handleAction(event) {
+            const button = event.currentTarget;
+            const action = button.dataset.action;
+            const bookingId = button.dataset.id;
+            const currentStatus = button.dataset.status === 'true';
+
+            if (!confirmationModal || !modalTitle || !modalBody || !confirmBtn) return;
+
+            confirmationModal.classList.remove('hidden');
+
+            if (action === 'toggle-complete') {
+                modalTitle.textContent = currentStatus ? 'Mark Booking Pending?' : 'Mark Booking Complete?';
+                modalBody.textContent = currentStatus
+                    ? 'This will change the status back to Pending (unresolved issue).'
+                    : 'This action marks the issue as resolved.';
+                confirmBtn.className = `px-4 py-2 rounded-full font-bold uppercase text-white ${currentStatus ? 'bg-red-600 hover:bg-red-700' : 'bg-green-600 hover:bg-green-700'} transition duration-300`;
+                confirmBtn.onclick = () => toggleComplete(bookingId, !currentStatus);
+            } else if (action === 'delete') {
+                modalTitle.textContent = 'Permanently Delete Booking?';
+                modalBody.textContent = 'This action cannot be undone. The booking will be permanently removed.';
+                confirmBtn.className = 'px-4 py-2 rounded-full font-bold uppercase text-white bg-red-800 hover:bg-red-900 transition duration-300';
+                confirmBtn.onclick = () => deleteBooking(bookingId);
+            }
+        }
+
+        if (modalCancelBtn) {
+            modalCancelBtn.addEventListener('click', () => {
+                if (confirmationModal) {
+                    confirmationModal.classList.add('hidden');
+                }
+            });
+        }
+
+        async function toggleComplete(id, newStatus) {
+            if (confirmationModal) confirmationModal.classList.add('hidden');
+            const bookingRef = doc(db, BOOKINGS_COLLECTION_PATH, id);
+            try {
+                await updateDoc(bookingRef, {
+                    isComplete: newStatus
+                });
+                console.log(`Booking ${id} status set to ${newStatus}`);
+            } catch (e) {
+                console.error("Error updating document: ", e);
+            }
+        }
+
+        async function deleteBooking(id) {
+            if (confirmationModal) confirmationModal.classList.add('hidden');
+            const bookingRef = doc(db, BOOKINGS_COLLECTION_PATH, id);
+            try {
+                await deleteDoc(bookingRef);
+                console.log(`Booking ${id} deleted.`);
+            } catch (e) {
+                console.error("Error deleting document: ", e);
+            }
+        }
+
+        // 4. Filter Buttons Logic
+        if (filterBtns.length > 0) {
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Update styling
+                    filterBtns.forEach(b => {
+                        b.classList.remove('bg-purple-600', 'hover:bg-purple-700', 'bg-cyan-600', 'hover:bg-cyan-700');
+                        b.classList.add('bg-gray-600', 'hover:bg-gray-700');
+                    });
+
+                    const filterType = this.dataset.filter;
+                    currentFilter = filterType;
+
+                    if (filterType === 'pending') {
+                        this.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+                        this.classList.add('bg-purple-600', 'hover:bg-purple-700');
+                    } else if (filterType === 'all') {
+                        this.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+                        this.classList.add('bg-cyan-600', 'hover:bg-cyan-700');
+                    }
+                    
+                    // Re-render the current bookings based on the new filter
+                    startBookingsListener(currentFilter);
+                });
+            });
+
+            // Set default button style on load
+            document.querySelector('.filter-btn[data-filter="pending"]')?.classList.remove('bg-gray-600', 'hover:bg-gray-700');
+            document.querySelector('.filter-btn[data-filter="pending"]')?.classList.add('bg-purple-600', 'hover:bg-purple-700');
+        }
+        
+        // 5. Authentication Setup
+        if (auth) {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    userId = user.uid;
+                    if (userIdDisplay) {
+                        userIdDisplay.textContent = `Admin User ID: ${userId}`;
+                    }
+                } else {
+                    // Sign in attempt if initialAuthToken is available, otherwise anonymous
+                    try {
+                         if (initialAuthToken) {
+                             await signInWithCustomToken(auth, initialAuthToken);
+                         } else {
+                             await signInAnonymously(auth);
+                         }
+                         // Re-run onAuthStateChanged listener to set userId
+                         return;
+                    } catch (e) {
+                         console.error("Authentication during startup failed:", e);
+                    }
+                }
+
+                // Auth is ready, now we can safely start Firestore listeners
+                isAuthReady = true;
+                // Start listening for bookings with the default filter
+                startBookingsListener(currentFilter);
+            });
+        }
+
+
+        // Initial icon creation
+        lucide.createIcons();
+    </script>
+</body>
+
+</html>
